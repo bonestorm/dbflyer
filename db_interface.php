@@ -144,7 +144,7 @@
           if(!array_key_exists($table,$jarray)){
             $jarray[$table] = array();
           }
-          foreach(array('Field','Type','Null') as &$field){
+          foreach(array('Field','Type','Null') as $field){
             $jarray[$table][strtolower($field)] = stripslashes($row[$field]);
           }
         }

@@ -406,12 +406,12 @@ _namespace.slist = function(globs) {
       var tabs = [];
       var fields = _globs.db_interface["fields"][OBJ.picked_database];
       var start_fields = fields[OBJ.tab_data.link.start];
-      var start_fields = fields[OBJ.tab_data.link.end];
-fields[_globs.db_interface["objects"][OBJ.picked_database];
+      //var start_fields = fields[OBJ.tab_data.link.end];
+//fields[_globs.db_interface["objects"][OBJ.picked_database];
 
       OBJ.tab_data = tab_data;//the join object
       tabs = [
-        new _namespace.input_title(_globs,{title: "This is the shit:"+OBJ.tab_data.db_id,height: OBJ.input_height,callback: function(){alert('hi');}})
+        new _namespace.input_title(_globs,{title: "This is the stuff:"+OBJ.tab_data.db_id,height: OBJ.input_height,callback: function(){alert('hi');}})
       ];
       OBJ.all_tables_placed = true;
       OBJ.active_tab = "join";
