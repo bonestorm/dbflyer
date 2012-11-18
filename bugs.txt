@@ -1,0 +1,9 @@
+
+
+1. when dragging selected things in the grid and you drag outside of the window it will clip to inside of the window and that's good
+  but if you unclick while it's outside of the grid, the items won't be moved.  it should move to the clipped position
+  this will need recognition of mouseup when dragging even outside of the grid.  this is already done for the tab menu so you can look
+  at it as a template maybe
+
+
+
