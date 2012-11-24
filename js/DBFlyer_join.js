@@ -62,6 +62,13 @@ _namespace.join = function(globs,options){
     OBJ.db_id = options.db_id;
   }
 
+  if(options.table_from_id !== undefined && options.table_to_id !== undefined){
+    OBJ.link = {linked: true,start:options.table_from_id,end:options.table_to_id};
+    OBJ.link.start_field = (options.field_from !== undefined) ? options.field_from : undefined;
+    OBJ.link.end_field = (options.field_to !== undefined) ? options.field_to : undefined;
+  }
+
+
   OBJ.type = function(){return "join";}
 
   //object for stepping down every cell in the given leads
@@ -797,6 +804,12 @@ _namespace.join = function(globs,options){
       table_to_id: OBJ.table_to_id,
       field_to_id: OBJ.field_to_id
     };
+    if(OBJ.link !== undefined){
+      pass_vars.table_from_id = OBJ.link.start;
+      pass_vars.table_to_id = OBJ.link.end;
+      if(OBJ.link.start_field !== undefined){pass_vars.field_from_id = OBJ.link.start_field;}
+      if(OBJ.link.end_field !== undefined){pass_vars.field_to_id = OBJ.link.end_field;}
+    }
 
     if(OBJ.db_id !== undefined){
       pass_vars.db_id = OBJ.db_id;

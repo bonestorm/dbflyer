@@ -403,20 +403,82 @@ _namespace.slist = function(globs) {
     }
 
     if(type == "join"){
-      var tabs = [];
-      var fields = _globs.db_interface["fields"][OBJ.picked_database];
-      var start_fields = fields[OBJ.tab_data.link.start];
-      //var start_fields = fields[OBJ.tab_data.link.end];
-//fields[_globs.db_interface["objects"][OBJ.picked_database];
+      if(tab_data !== undefined){
 
-      OBJ.tab_data = tab_data;//the join object
-      tabs = [
-        new _namespace.input_title(_globs,{title: "This is the stuff:"+OBJ.tab_data.db_id,height: OBJ.input_height,callback: function(){alert('hi');}})
-      ];
-      OBJ.all_tables_placed = true;
-      OBJ.active_tab = "join";
-      OBJ.tabs["join"].set_to(tabs);
-      OBJ.tab_footprint();
+        OBJ.tab_data = tab_data;//the join object
+
+/*
+        var tabs = [];
+        var fields = _globs.db_interface["fields"][OBJ.picked_database];
+        var start_fields = fields[OBJ.tab_data.link.start];
+        //var start_fields = fields[OBJ.tab_data.link.end];
+  //fields[_globs.db_interface["objects"][OBJ.picked_database];
+          new _namespace.input_dropdown(_globs,{
+            data: table_names,
+            height: OBJ.input_height,
+            callback: function (picked_table){
+              //now just sit there and show the table that was picked
+              _globs.refresh();
+            }
+          })
+*/
+
+        var o = _globs.db_interface.objects[_globs.slist.picked_database];
+
+        var start_table = o.grid_info[OBJ.tab_data.link.start].name;
+        var end_table = o.grid_info[OBJ.tab_data.link.end].name;
+
+
+        function make_join_input(){
+          var f = _globs.db_interface.fields[_globs.slist.picked_database];
+//          alert(f[start_table]);
+          var start_data = [];
+          for(var fname in f[start_table]){
+            start_data.push(fname);
+          }
+          var end_data = [];
+          for(var fname in f[end_table]){
+            end_data.push(fname);
+          }
+
+          tabs = [
+            new _namespace.input_title(_globs,{title: start_table,height: OBJ.input_height,callback: function(){alert('hi');}}),
+            new _namespace.input_dropdown(_globs,{
+              data: start_data,height: OBJ.input_height,
+              callback: function (picked_field){
+                alert("start field picked:"+picked_field);
+                _globs.refresh();
+              }
+            }),
+            new _namespace.input_title(_globs,{title: "<-- joined to -->",height: OBJ.input_height}),
+            new _namespace.input_title(_globs,{title: end_table,height: OBJ.input_height,callback: function(){alert('hi');}}),
+            new _namespace.input_dropdown(_globs,{
+              data: end_data,height: OBJ.input_height,
+              callback: function (picked_field){
+                alert("end field picked:"+picked_field);
+                _globs.refresh();
+              }
+            }),
+          ];
+          OBJ.all_tables_placed = true;
+          OBJ.active_tab = "join";
+          OBJ.tabs["join"].set_to(tabs);
+          OBJ.tab_footprint();
+          _globs.refresh();
+        }
+
+        var load_tables = [];//list of tables to load fields for
+
+        var f = _globs.db_interface.fields[_globs.slist.picked_database];
+        if(f === undefined || f[start_table] === undefined){load_tables.push(start_table);}
+        if(f === undefined || f[end_table] === undefined){load_tables.push(start_table);}
+        if(load_tables.length > 0){
+          _globs.db_interface.load_table_fields([start_table,end_table],make_join_input);
+        } else {
+          make_join_input();//already loaded, just make it already
+        }
+
+      }
     }
 
     //keep track of the last active tab
@@ -429,7 +491,7 @@ _namespace.slist = function(globs) {
 
   OBJ.clear_input_type = function(clear_tab){
     var tab = (clear_tab === undefined) ? OBJ.input_tab : clear_tab;
-    if(OBJ.active_tab !== undefined && OBJ.active_tab == tab){
+    //if(OBJ.active_tab !== undefined && OBJ.active_tab == tab){
       OBJ.tabs[tab].set_to([]);
       OBJ.tab_footprint();
       if(tab == OBJ.active_tab){
@@ -438,7 +500,7 @@ _namespace.slist = function(globs) {
           OBJ.last_tab = undefined;//we don't keep a history so unset it
         }
       }
-    }
+    //}
   }
 
   OBJ.start_input_type("db");//load the initial information

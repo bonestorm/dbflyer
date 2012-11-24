@@ -133,19 +133,20 @@
 
     case 'table_data':
 
-      $table = $_GET["table"];
+      foreach($_GET["tables"] as $table){
 
-      //get the field names of the table
-      $query = "SHOW COLUMNS FROM ".$table;
+        //get the field names of the table
+        $query = "SHOW COLUMNS FROM ".$table;
 
-      $result = $mysqli->query($query) or trigger_error('Query failed: ' . $mysqli->error, E_USER_ERROR);
-      if($result->num_rows > 0) {
-        while($row = $result->fetch_array()) {
-          if(!array_key_exists($table,$jarray)){
-            $jarray[$table] = array();
-          }
-          foreach(array('Field','Type','Null') as $field){
-            $jarray[$table][strtolower($field)] = stripslashes($row[$field]);
+        $result = $mysqli->query($query) or trigger_error('Query failed: ' . $mysqli->error, E_USER_ERROR);
+        if($result->num_rows > 0) {
+          while($row = $result->fetch_array()) {
+            if(!array_key_exists($table,$jarray)){
+              $jarray[$table] = array();
+            }
+            foreach(array('Type','Null') as $ff){
+              $jarray[$table][$row["Field"]][strtolower($ff)] = stripslashes($row[$ff]);
+            }
           }
         }
       }

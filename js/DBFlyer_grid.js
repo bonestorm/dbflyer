@@ -309,6 +309,7 @@ _namespace.grid = function(globs) {
     var qex = Math.floor((ex-1)/4);var qey = Math.floor((ey-1)/4);
 
     //draw all the objects in the grid
+    var selected = [];
     for(var qx=qsx;qx<=qex;qx++){
       for(var qy=qsy;qy<=qey;qy++){
         for(var quad_ind in _hooks[qx][qy]){
@@ -316,8 +317,9 @@ _namespace.grid = function(globs) {
           if(h.cx >= sx && h.cy >= sy && h.cx < ex && h.cy < ey){
             var obj = _hooks[qx][qy][quad_ind].obj;
             var box_sel = obj.grid_behavior.box_selectable;
-            if(box_sel === undefined || box_sel){
+            if((box_sel === undefined || box_sel) && selected[obj.id] === undefined){
               OBJ.select_obj(obj,{select:true,override: true});
+              selected[obj.id] = 1;
             }
           }
         }

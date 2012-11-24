@@ -37,20 +37,13 @@ _namespace.db_interface = function(globs) {
 
   OBJ.set_table_fields = function(database,table,fields){
     if($.inArray(database,OBJ.databases) != -1){
-      if(OBJ.tables[database] !== undefined){
-        if(OBJ.tables[database][table] !== undefined){
-          if(OBJ.fields[database] === undefined){OBJ.fields[database] = [];}//autovivification
-          if(OBJ.fields[database][table] === undefined){OBJ.fields[database][table] = [];}//autovivification
-          if(fields === undefined){//if fields is null then delete existing one
-            delete OBJ.fields[database][table];
-          } else {
-            OBJ.fields[database][table] = fields;//a list of field objects
-          }
-        } else {
-          alert("no table " + table + " in database " + database);
-        }
+      if(OBJ.fields === undefined){OBJ.fields = [];}
+      if(OBJ.fields[database] === undefined){OBJ.fields[database] = [];}
+      if(OBJ.fields[database][table] === undefined){OBJ.fields[database][table] = [];}//autovivification
+      if(fields === undefined){//if fields is null then delete existing one
+        delete OBJ.fields[database][table];
       } else {
-        alert("no tables in database " + database);
+        OBJ.fields[database][table] = fields;//a list of field objects
       }
     } else {
       alert("no database " + database + " in database info");
@@ -163,6 +156,17 @@ _namespace.db_interface = function(globs) {
 
     OBJ.call(db_info_loaded,{mode: "database_data", database: _globs.slist.picked_database});//load in all the objects for this database              
 
+  }
+
+  OBJ.load_table_fields = function(tables,callback){
+    function db_info_loaded(objects){
+      for(var table_name in objects){
+          OBJ.set_table_fields(_globs.slist.picked_database,table_name,objects[table_name]);
+      }
+      if(callback !== undefined){callback();}
+    }
+
+    OBJ.call(db_info_loaded,{mode: "table_data", database: _globs.slist.picked_database, tables: tables});
   }
 
   return OBJ;
