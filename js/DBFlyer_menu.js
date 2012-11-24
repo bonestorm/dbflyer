@@ -336,6 +336,9 @@ _namespace.menu = function(globs) {
     return {};//not a recognized event
     
   }
+
+  //delete_from_db and save_to_db are required for all grid objects but the menu object is not interactable by the grid
+  //  so they won't be called
   
   return OBJ;
 }

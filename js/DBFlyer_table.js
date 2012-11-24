@@ -167,7 +167,7 @@ _namespace.table = function(globs,options){
 
   }
 
-
+  //required for all grid objects
   OBJ.save_to_db = function(callback){
 
     var table_callback = function(json){
@@ -188,6 +188,7 @@ _namespace.table = function(globs,options){
 
   }
 
+  //required for all grid objects
   OBJ.delete_from_db = function(callback){
     if(OBJ.db_id !== undefined){
       var json = _globs.db_interface.call(callback,{mode: "delete_object", database: _globs.slist.picked_database, id: OBJ.db_id});//name: OBJ.name});

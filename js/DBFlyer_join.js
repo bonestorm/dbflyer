@@ -382,32 +382,32 @@ _namespace.join = function(globs,options){
 */
 //DRAW TARGETS
 
-    _globs.context.save();
+    ctx.save();
 
-    _globs.context.fillStyle = (OBJ.selected) ? "#000000" : "#FFFFFF";
-    _globs.context.strokeStyle = "#000000";
-    _globs.context.lineWidth = 1;
-    _globs.context.globalAlpha = 1;
+    ctx.fillStyle = (OBJ.selected) ? "#000000" : "#FFFFFF";
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 1;
 
     var sx = (OBJ.cx+OBJ.lead_start[0]-window.x*4)*_globs.cell_size+_globs.cell_size/2;
     var sy = (OBJ.cy+OBJ.lead_start[1]-window.y*4)*_globs.cell_size+_globs.cell_size/2;
 
-    _globs.context.beginPath();
-    _globs.context.arc(sx+0.5,sy+0.5,5,0,PI2,true);
-    _globs.context.stroke();
-    _globs.context.fill();
-    _globs.context.closePath();
+    ctx.beginPath();
+    ctx.arc(sx+0.5,sy+0.5,5,0,PI2,true);
+    ctx.stroke();
+    ctx.fill();
+    ctx.closePath();
 
     var ex = (OBJ.cx+OBJ.lead_end[0]-window.x*4)*_globs.cell_size+_globs.cell_size/2;
     var ey = (OBJ.cy+OBJ.lead_end[1]-window.y*4)*_globs.cell_size+_globs.cell_size/2;
 
-    _globs.context.beginPath();
-    _globs.context.arc(ex+0.5,ey+0.5,5,0,PI2,true);
-    _globs.context.stroke();
-    _globs.context.fill();
-    _globs.context.closePath();
+    ctx.beginPath();
+    ctx.arc(ex+0.5,ey+0.5,5,0,PI2,true);
+    ctx.stroke();
+    ctx.fill();
+    ctx.closePath();
 
-    _globs.context.restore();
+    ctx.restore();
 
   }
   
@@ -782,7 +782,7 @@ _namespace.join = function(globs,options){
 
   }
 
-
+  //required for all grid objects
   OBJ.save_to_db = function(callback){
 
     var table_callback = function(json){
@@ -819,6 +819,7 @@ _namespace.join = function(globs,options){
 
   }
 
+  //required for all grid objects
   OBJ.delete_from_db = function(callback){
     if(OBJ.db_id !== undefined){
       var json = _globs.db_interface.call(callback,{mode: "delete_object", database: _globs.slist.picked_database, id: OBJ.db_id});

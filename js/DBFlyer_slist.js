@@ -423,6 +423,9 @@ _namespace.slist = function(globs) {
           })
 */
 
+        //not linked
+        if(!OBJ.tab_data.link || !OBJ.tab_data.link.linked){return;}
+
         var o = _globs.db_interface.objects[_globs.slist.picked_database];
 
         var start_table = o.grid_info[OBJ.tab_data.link.start].name;
@@ -442,7 +445,7 @@ _namespace.slist = function(globs) {
           }
 
           tabs = [
-            new _namespace.input_title(_globs,{title: start_table,height: OBJ.input_height,callback: function(){alert('hi');}}),
+            new _namespace.input_title(_globs,{title: start_table+".",height: OBJ.input_height,callback: function(){alert('hi');}}),
             new _namespace.input_dropdown(_globs,{
               data: start_data,height: OBJ.input_height,
               callback: function (picked_field){
@@ -451,7 +454,7 @@ _namespace.slist = function(globs) {
               }
             }),
             new _namespace.input_title(_globs,{title: "<-- joined to -->",height: OBJ.input_height}),
-            new _namespace.input_title(_globs,{title: end_table,height: OBJ.input_height,callback: function(){alert('hi');}}),
+            new _namespace.input_title(_globs,{title: end_table+".",height: OBJ.input_height,callback: function(){alert('hi');}}),
             new _namespace.input_dropdown(_globs,{
               data: end_data,height: OBJ.input_height,
               callback: function (picked_field){

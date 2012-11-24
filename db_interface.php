@@ -96,7 +96,7 @@
       $query = "
         select
           gj.leads,gj.lead_start,
-          gj.table_from_id,gj.field_from_id,gj.table_to_id,gj.field_to_id,
+          gj.table_from_id,gj.field_from,gj.table_to_id,gj.field_to,
         $go_fields
         from grid_join gj,grid_object go
         where go.id = gj.grid_object_id
@@ -219,7 +219,7 @@
       if($type == "JOIN"){
 
         $valid_join = true;
-        $join_fields = array('table_from_id','field_from_id','table_to_id','field_to_id','leads','lead_start');
+        $join_fields = array('table_from_id','field_from','table_to_id','field_to','leads','lead_start');
         foreach($join_fields as $field){
           if(!isset($_GET[$field])){
             if($field == "leads" || $field == "lead_start"){
@@ -234,7 +234,7 @@
         }
 
         if($valid_join){
-          $query = "INSERT INTO grid_join (grid_object_id,".implode(",",$join_fields).") values ($grid_object_id,$table_from_id,$field_from_id,$table_to_id,$field_to_id,'$leads','$lead_start')";
+          $query = "INSERT INTO grid_join (grid_object_id,".implode(",",$join_fields).") values ($grid_object_id,$table_from_id,$field_from,$table_to_id,$field_to,'$leads','$lead_start')";
           $result = $mysqli->query($query) or trigger_error('Query ('.$query.') failed: ' . $mysqli->error, E_USER_ERROR);
 
           $jarray = array("id" => $grid_object_id,"type" => "join","x" => $x,"y" => $y);
