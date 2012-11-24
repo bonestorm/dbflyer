@@ -10,8 +10,10 @@ _namespace.db_interface = function(globs) {
   var ajax_load = $("<div style='margin:350px auto;width: 32px;'><img src='img/load.gif' alt='loading...' /></div>");
 
   var OBJ = {
+
     ajax_load: ajax_load,
-    ajax_load_shown_count: 0,
+    call_stack: [],
+
     db_interface_script: "db_interface.php",
     databases: [],
     objects: [],
@@ -63,50 +65,61 @@ _namespace.db_interface = function(globs) {
   }
 
   OBJ.call = function(callback,data){
-    if(OBJ.ajax_load_shown_count == 0){
-      $("#text_overlay").append(OBJ.ajax_load);
+
+    function ajax_call(){
+      $.ajax({
+        url: OBJ.db_interface_script,
+        async: true,
+        dataType: 'json',
+        data: OBJ.call_stack[0].data,
+        success: function(json) {
+
+          var o = OBJ.objects[_globs.slist.picked_database];
+
+          if(OBJ.call_stack[0].mode == "save_object"){
+            if(OBJ.call_stack[0].name !== undefined){
+              o.table_ids[OBJ.call_stack[0].name] = json.id;
+            }
+            if(o.grid_info[json.id] === undefined){o.grid_info[json.id] = {};}
+            for(var i in json){
+              if(i == "leads"){
+                o.grid_info[json.id][i] = eval(json[i]);
+              } else {
+                o.grid_info[json.id][i] = json[i];
+              }
+            }
+          }
+          if(OBJ.call_stack[0].mode == "delete_object"){
+            if(o.grid_info[OBJ.call_stack[0].id] !== undefined){
+              var gi = o.grid_info[OBJ.call_stack[0].id];
+              if(gi.type.match(/TABLE/i) && o.table_ids[gi.name] !== undefined){
+                o.table_ids[gi.name] = -1;
+              }
+              delete o.grid_info[OBJ.call_stack[0].id];
+            }
+          }
+
+          if(OBJ.call_stack[0].callback !== undefined){OBJ.call_stack[0].callback(json);}
+
+          OBJ.call_stack.shift();//remove this call
+
+          if(OBJ.call_stack.length == 0){
+            OBJ.ajax_load.remove();
+          } else {
+            ajax_call();
+          }
+
+        }
+      });
     }
-    OBJ.ajax_load_shown_count++;
+    
+    OBJ.call_stack.push({callback:callback,data:data});
 
-    $.ajax({
-      url: OBJ.db_interface_script,
-      async: true,
-      dataType: 'json',
-      data: data,
-      success: function(json) {
-        OBJ.ajax_load_shown_count--;
-        if(OBJ.ajax_load_shown_count == 0){
-          OBJ.ajax_load.remove();
-        }
+    if(OBJ.call_stack.length == 1){//start up the chain
+      $("#text_overlay").append(OBJ.ajax_load);//notify that it's processing
+      ajax_call();//rev up the chain
+    }
 
-        var o = OBJ.objects[_globs.slist.picked_database];
-
-        if(data.mode == "save_object"){
-          if(data.name !== undefined){
-            o.table_ids[data.name] = json.id;
-          }
-          if(o.grid_info[json.id] === undefined){o.grid_info[json.id] = {};}
-          for(var i in json){
-            if(i == "leads"){
-              o.grid_info[json.id][i] = eval(json[i]);
-            } else {
-              o.grid_info[json.id][i] = json[i];
-            }
-          }
-        }
-        if(data.mode == "delete_object"){
-          if(o.grid_info[data.id] !== undefined){
-            var gi = o.grid_info[data.id];
-            if(gi.type.match(/TABLE/i) && o.table_ids[gi.name] !== undefined){
-              o.table_ids[gi.name] = -1;
-            }
-            delete o.grid_info[data.id];
-          }
-        }
-
-        if(callback !== undefined){callback(json);}
-      }
-    });
   }
 
 

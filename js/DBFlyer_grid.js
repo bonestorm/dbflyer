@@ -61,8 +61,10 @@ _namespace.grid = function(globs) {
   
   var _drag_halo_xy;
   
-  var _halo_size = 5*(_globs.cell_size*4);
-  
+  var _halo_cells = 30;
+  var _half_halo_cells = Math.floor(_halo_cells/2);
+  var _halo_size = _halo_cells*(_globs.cell_size*4);
+
   //create the halo canvas used for dragging objects around
   var _drag_mask_canvas = $('<canvas id="drag_mask" width="'+_halo_size+'" height="'+_halo_size+'">Too cool for HTML5, huh?</canvas>')[0];
   var _drag_mask_ctx = _drag_mask_canvas.getContext("2d");
@@ -690,7 +692,7 @@ _namespace.grid = function(globs) {
         
         draw_objects(
           _drag_halo_ctx,_selected_objs,
-          {x: Math.floor(_drag_halo_xy.x/4)-2,y: Math.floor(_drag_halo_xy.y/4)-2}//for window
+          {x: Math.floor(_drag_halo_xy.x/4)-_half_halo_cells,y: Math.floor(_drag_halo_xy.y/4)-_half_halo_cells}//for window
         );
         
  
@@ -702,7 +704,7 @@ _namespace.grid = function(globs) {
           _halo_size/2,_halo_size/2,_halo_size/2
         );
         _drag_mask.addColorStop(0,'rgba(0,0,0,1)');
-        _drag_mask.addColorStop(1,'rgba(0,0,0,0)');
+        _drag_mask.addColorStop(1,'rgba(0,0,0,0.6)');
         _drag_halo_ctx.fillStyle = _drag_mask;
         _drag_halo_ctx.fillRect(0,0,_halo_size,_halo_size);
 
@@ -721,8 +723,8 @@ _namespace.grid = function(globs) {
       
       _globs.context.drawImage(
         _drag_halo_canvas,
-        (_cx-mod_x-(OBJ.window.x+2)*4)*_globs.cell_size,
-        (_cy-mod_y-(OBJ.window.y+2)*4)*_globs.cell_size
+        (_cx-mod_x-(OBJ.window.x+_half_halo_cells)*4)*_globs.cell_size,
+        (_cy-mod_y-(OBJ.window.y+_half_halo_cells)*4)*_globs.cell_size
       );
       
     }

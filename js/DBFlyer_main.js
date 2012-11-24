@@ -207,7 +207,7 @@ _namespace.main = function () {
     OBJ.shiftKey = e.shiftKey;//keep the status of the shift key in main
     OBJ.ctrlKey = e.ctrlKey;
     OBJ.altKey = e.altKey;
-    log("keydown, shift:"+OBJ.shiftKey+" ctrl:"+OBJ.ctrlKey+" alt:"+OBJ.altKey);
+    //log("keydown, shift:"+OBJ.shiftKey+" ctrl:"+OBJ.ctrlKey+" alt:"+OBJ.altKey);
 
     globs.grid.update_cursor();
     
@@ -246,7 +246,7 @@ _namespace.main = function () {
     OBJ.shiftKey = e.shiftKey;
     OBJ.ctrlKey = e.ctrlKey;
     OBJ.altKey = e.altKey;
-    log("keyup, shift:"+OBJ.shiftKey+" ctrl:"+OBJ.ctrlKey+" alt:"+OBJ.altKey);
+    //log("keyup, shift:"+OBJ.shiftKey+" ctrl:"+OBJ.ctrlKey+" alt:"+OBJ.altKey);
     globs.grid.update_cursor();
   }
   

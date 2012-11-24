@@ -205,11 +205,9 @@ _namespace.menu = function(globs) {
     
     get_shown_position(window);
     
-    /*
-    log("shown "+_shown_x+":"+_shown_y);
-    log("OBJ "+OBJ.cx+":"+OBJ.cy);
-    log("window "+window.x+":"+window.y);
-    */
+    //log("shown "+_shown_x+":"+_shown_y);
+    //log("OBJ "+OBJ.cx+":"+OBJ.cy);
+    //log("window "+window.x+":"+window.y);
     
 /*
     ctx.globalAlpha = 0.5;
