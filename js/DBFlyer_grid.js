@@ -224,7 +224,7 @@ _namespace.grid = function(globs) {
       _focused_obj = obj;
     } else {
       if(_focused_obj !== undefined){
-        if(obj.focus_notify !== undefined){obj.focus_notify(false);}
+        if(_focused_obj.focus_notify !== undefined){_focused_obj.focus_notify(false);}
         _focused_obj.focus = false;
         _focused_obj = undefined;
         
