@@ -402,91 +402,73 @@ _namespace.slist = function(globs) {
     }
 
     if(type == "join"){
-      if(tab_data !== undefined){
 
-        OBJ.tab_data = tab_data;//the join object
+      //not linked
+      if(tab_data === undefined || !tab_data.link || !tab_data.link.linked){return;}
 
-/*
-        var tabs = [];
-        var fields = _globs.db_interface["fields"][OBJ.picked_database];
-        var start_fields = fields[OBJ.tab_data.link.start];
-        //var start_fields = fields[OBJ.tab_data.link.end];
-  //fields[_globs.db_interface["objects"][OBJ.picked_database];
-          new _namespace.input_dropdown(_globs,{
-            data: table_names,
-            height: OBJ.input_height,
-            callback: function (picked_table){
-              //now just sit there and show the table that was picked
-              _globs.refresh();
-            }
-          })
-*/
+      OBJ.tab_data = tab_data;//the join object
 
-        //not linked
-        if(!OBJ.tab_data.link || !OBJ.tab_data.link.linked){return;}
+      var o = _globs.db_interface.objects[_globs.slist.picked_database];
 
-        var o = _globs.db_interface.objects[_globs.slist.picked_database];
-
-        var start_table = o.grid_info[OBJ.tab_data.link.start].name;
-        var end_table = o.grid_info[OBJ.tab_data.link.end].name;
+      var start_table = o.grid_info[OBJ.tab_data.link.start].name;
+      var end_table = o.grid_info[OBJ.tab_data.link.end].name;
 
 
-        function make_join_input(){
+      function make_join_input(){
 
-          if(OBJ.active_tab == "join" && OBJ.tab_data == tab_data){//if it's still on the join tab and not cancelled
-            var f = _globs.db_interface.fields[_globs.slist.picked_database];
-  //          alert(f[start_table]);
-            var start_data = [];
-            for(var fname in f[start_table]){
-              start_data.push(fname);
-            }
-            var end_data = [];
-            for(var fname in f[end_table]){
-              end_data.push(fname);
-            }
-
-            var tabs = [
-              new _namespace.input_title(_globs,{title: start_table+".",height: OBJ.input_height,callback: function(){alert('hi');}}),
-              new _namespace.input_dropdown(_globs,{
-                data: start_data,height: OBJ.input_height,
-                callback: function (picked_field){
-                  alert("start field picked:"+picked_field);
-                  _globs.refresh();
-                }
-              }),
-              new _namespace.input_title(_globs,{title: "<-- joined to -->",height: OBJ.input_height}),
-              new _namespace.input_title(_globs,{title: end_table+".",height: OBJ.input_height,callback: function(){alert('hi');}}),
-              new _namespace.input_dropdown(_globs,{
-                data: end_data,height: OBJ.input_height,
-                callback: function (picked_field){
-                  alert("end field picked:"+picked_field);
-                  _globs.refresh();
-                }
-              }),
-            ];
-            OBJ.tabs["join"].set_to(tabs);
-            OBJ.tab_footprint();
-            _globs.refresh();
-
+        if(OBJ.active_tab == "join" && OBJ.tab_data == tab_data){//if it's still on the join tab and not cancelled
+          var f = _globs.db_interface.fields[_globs.slist.picked_database];
+//          alert(f[start_table]);
+          var start_data = [];
+          for(var fname in f[start_table]){
+            start_data.push(fname);
+          }
+          var end_data = [];
+          for(var fname in f[end_table]){
+            end_data.push(fname);
           }
 
+          var tabs = [
+            new _namespace.input_title(_globs,{title: start_table+".",height: OBJ.input_height,callback: function(){alert('hi');}}),
+            new _namespace.input_dropdown(_globs,{
+              data: start_data,height: OBJ.input_height,
+              callback: function (picked_field){
+                alert("start field picked:"+picked_field);
+                _globs.refresh();
+              }
+            }),
+            new _namespace.input_title(_globs,{title: "<-- joined to -->",height: OBJ.input_height}),
+            new _namespace.input_title(_globs,{title: end_table+".",height: OBJ.input_height,callback: function(){alert('hi');}}),
+            new _namespace.input_dropdown(_globs,{
+              data: end_data,height: OBJ.input_height,
+              callback: function (picked_field){
+                alert("end field picked:"+picked_field);
+                _globs.refresh();
+              }
+            }),
+          ];
+          OBJ.tabs["join"].set_to(tabs);
+          OBJ.tab_footprint();
+          _globs.refresh();
+
         }
 
-        OBJ.active_tab = "join";
-        OBJ.tabs["join"].set_to([
-          new _namespace.input_title(_globs,{title: "loading field information",height: OBJ.input_height,callback: function(){alert('hi');}}),
-        ]);
+      }
 
-        var load_tables = [];//list of tables to load fields for
+      OBJ.active_tab = "join";
+      OBJ.tabs["join"].set_to([
+        new _namespace.input_title(_globs,{title: "loading field information",height: OBJ.input_height,callback: function(){alert('hi');}}),
+      ]);
 
-        var f = _globs.db_interface.fields[_globs.slist.picked_database];
-        if(f === undefined || f[start_table] === undefined){load_tables.push(start_table);}
-        if(f === undefined || f[end_table] === undefined){load_tables.push(start_table);}
-        if(load_tables.length > 0){
-          _globs.db_interface.load_table_fields([start_table,end_table],make_join_input);
-        } else {
-          make_join_input();//already loaded, just make it already
-        }
+      var load_tables = [];//list of tables to load fields for
+
+      var f = _globs.db_interface.fields[_globs.slist.picked_database];
+      if(f === undefined || f[start_table] === undefined){load_tables.push(start_table);}
+      if(f === undefined || f[end_table] === undefined){load_tables.push(start_table);}
+      if(load_tables.length > 0){
+        _globs.db_interface.load_table_fields([start_table,end_table],make_join_input);
+      } else {
+        make_join_input();//already loaded, just make it already
       }
     }
 
