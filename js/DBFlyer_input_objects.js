@@ -31,7 +31,8 @@ _namespace.input_dropdown = function(globs,options){
   this.scrollbar = undefined;
 
   this.hit_option = 0;//set to > 0 when an option is picked
-  this.picked = "";//the element in options.data that was picked.  passed back in the callback
+  this.picked = (options.picked !== undefined) ? options.picked : "";//the element in options.data that was picked.  passed back in the callback
+
   this.reset = function(){this.dropped = 0;this.picked = "";this.hit_option = 0;}
 
   this.start_option = 0;//for pagination
@@ -348,6 +349,8 @@ _namespace.input_dropdown = function(globs,options){
     }
 
   }
+
+  this.set_data(this.data);
 
 };
 

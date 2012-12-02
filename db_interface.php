@@ -135,6 +135,8 @@
 
       foreach($_GET["tables"] as $table){
 
+        $mysqli->select_db($database) or trigger_error("Unable to select database: " . $database, E_USER_ERROR);
+
         //get the field names of the table
         $query = "SHOW COLUMNS FROM ".$table;
 
@@ -233,8 +235,16 @@
           }
         }
 
+        $quoted_fields = array('field_from','field_to','leads','lead_start');
+        foreach($quoted_fields as $qfield){
+          if($$qfield != "NULL"){
+            $$qfield = "'".$$qfield."'";
+          }
+        }
+
         if($valid_join){
-          $query = "INSERT INTO grid_join (grid_object_id,".implode(",",$join_fields).") values ($grid_object_id,$table_from_id,$field_from,$table_to_id,$field_to,'$leads','$lead_start')";
+          $query = "INSERT INTO grid_join (grid_object_id,".implode(",",$join_fields).") values ($grid_object_id,$table_from_id,$field_from,$table_to_id,$field_to,$leads,$lead_start)";
+
           $result = $mysqli->query($query) or trigger_error('Query ('.$query.') failed: ' . $mysqli->error, E_USER_ERROR);
 
           $jarray = array("id" => $grid_object_id,"type" => "join","x" => $x,"y" => $y);

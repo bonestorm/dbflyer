@@ -36,10 +36,15 @@ _namespace.slist = function(globs) {
 
   }
 
+  //for other objects to find the bounding box of this slist
+  OBJ.footprint = function(){
+    return {x:OBJ.x,y:OBJ.y-OBJ.tab_height,width:OBJ.width,height:OBJ.height+OBJ.tab_height};
+  }
+
   OBJ.resize();
 
   //object for a single tab.  holds the sections,width,offset,speed
-  function input_tab(order,name,title,sections) {
+  function inputTab(order,name,title,sections) {
       this.order = order;
       this.name = name;//identifier in the code
       this.title = title;//what will be shown in the tab
@@ -72,11 +77,11 @@ _namespace.slist = function(globs) {
   };
 
   OBJ.tabs = {
-    db: new input_tab(1,"db","Database Listing"),
-    tables: new input_tab(2,"tables","Tables"),
-    table: new input_tab(4,"table","Table Info"),
-    join: new input_tab(5,"join","Join Info"),
-    comment: new input_tab(6,"comment","Comment Info")
+    db: new inputTab(1,"db","Database Listing"),
+    tables: new inputTab(2,"tables","Tables"),
+    table: new inputTab(4,"table","Table Info"),
+    join: new inputTab(5,"join","Join Info"),
+    comment: new inputTab(6,"comment","Comment Info")
   };
   OBJ.tabs_shown_sorted = [];
   OBJ.tab_titles = {};
@@ -189,33 +194,13 @@ _namespace.slist = function(globs) {
 
     var ctx = _globs.context;
 
-    //border
-    ctx.strokeStyle = "#ffffff";
-    ctx.fillStyle = "#ffffff";
-    ctx.lineWidth = 1;
-    roundRect(ctx, OBJ.x+0.5,OBJ.y+0.5, OBJ.width, OBJ.height, 4);
-    ctx.stroke();
-    ctx.globalAlpha = 1.0;
-    ctx.fill();
-
-    //show where the click was
-    if(_hitx >= 0 && _hity >= 0){
-      //title
-      ctx.fillStyle = "#000000";
-      ctx.font = "12px Verdana";
-      ctx.textAlign = "center"
-      ctx.textBaseline = "middle";
-      ctx.fillText(_hitx+":"+_hity+" "+OBJ.frame,OBJ.x+Math.floor(OBJ.width/2)+0.5,OBJ.y+Math.floor(OBJ.height/2)+0.5);
-    }
-
-
     //draw the actual tab at the top
     function draw_tab(i,active_tab){
 
       //tab border
       ctx.strokeStyle = "#000000";
       ctx.fillStyle = "#ffffff";
-      ctx.lineWidth = (active_tab && OBJ.selected) ? 20 : 1;
+      ctx.lineWidth = (active_tab && OBJ.selected) ? 2 : 1;
       //if(i == OBJ.active_tab){ctx.lineWidth = 2;}else{ctx.lineWidth = 1;}
 
       roundTab(
@@ -268,6 +253,29 @@ _namespace.slist = function(globs) {
       ctx.restore();
 
     }
+
+
+/*
+
+    //border
+    ctx.strokeStyle = "#ffffff";
+    ctx.fillStyle = "#ffffff";
+    ctx.lineWidth = 3;
+    roundRect(ctx, OBJ.x+0.5,OBJ.y+0.5, OBJ.width, OBJ.height, 4);
+    ctx.stroke();
+    ctx.globalAlpha = 1.0;
+    ctx.fill();
+
+    //show where the click was
+    if(_hitx >= 0 && _hity >= 0){
+      //title
+      ctx.fillStyle = "#000000";
+      ctx.font = "12px Verdana";
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle";
+      ctx.fillText(_hitx+":"+_hity+" "+OBJ.frame,OBJ.x+Math.floor(OBJ.width/2)+0.5,OBJ.y+Math.floor(OBJ.height/2)+0.5);
+    }
+*/
 
     OBJ.frame++;
     
@@ -428,24 +436,40 @@ _namespace.slist = function(globs) {
             end_data.push(fname);
           }
 
+          var start_dropdown_options = {
+            data: start_data,height: OBJ.input_height,
+            callback: function (picked_field){
+              if(picked_field.length > 0){
+                OBJ.tab_data.link.start_field = picked_field;
+                OBJ.tab_data.save_to_db();                  
+              }
+              _globs.refresh();
+            }
+          };
+
+          var end_dropdown_options = {
+            data: end_data,height: OBJ.input_height,
+            callback: function (picked_field){
+              if(picked_field.length > 0){
+                OBJ.tab_data.link.end_field = picked_field;
+                OBJ.tab_data.save_to_db();
+              }
+              _globs.refresh();
+            }
+          };
+
+
+          if(OBJ.tab_data.link !== undefined){
+            start_dropdown_options.picked = OBJ.tab_data.link.start_field;
+            end_dropdown_options.picked = OBJ.tab_data.link.end_field;
+          }
+
           var tabs = [
             new _namespace.input_title(_globs,{title: start_table+".",height: OBJ.input_height,callback: function(){alert('hi');}}),
-            new _namespace.input_dropdown(_globs,{
-              data: start_data,height: OBJ.input_height,
-              callback: function (picked_field){
-                alert("start field picked:"+picked_field);
-                _globs.refresh();
-              }
-            }),
+            new _namespace.input_dropdown(_globs,start_dropdown_options),
             new _namespace.input_title(_globs,{title: "<-- joined to -->",height: OBJ.input_height}),
             new _namespace.input_title(_globs,{title: end_table+".",height: OBJ.input_height,callback: function(){alert('hi');}}),
-            new _namespace.input_dropdown(_globs,{
-              data: end_data,height: OBJ.input_height,
-              callback: function (picked_field){
-                alert("end field picked:"+picked_field);
-                _globs.refresh();
-              }
-            }),
+            new _namespace.input_dropdown(_globs,end_dropdown_options)
           ];
           OBJ.tabs["join"].set_to(tabs);
           OBJ.tab_footprint();
@@ -481,7 +505,7 @@ _namespace.slist = function(globs) {
   }
 
   OBJ.clear_input_type = function(clear_tab){
-    var tab = (clear_tab === undefined) ? OBJ.input_tab : clear_tab;
+    var tab = (clear_tab === undefined) ? OBJ.active_tab : clear_tab;
     //if(OBJ.active_tab !== undefined && OBJ.active_tab == tab){
       OBJ.tabs[tab].set_to([]);
       OBJ.tab_footprint();

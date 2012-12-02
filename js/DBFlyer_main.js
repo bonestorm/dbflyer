@@ -124,7 +124,7 @@ _namespace.main = function () {
     cell_size: 16,
     quads_wide: 16*4,quads_high: 12*4,//number of cells wide and high the whole grid is
     border: 50,//border width around the grid
-    margin: {x:0,y:100},//top and left empty space
+    margin: {x:0,y:300},//top and left empty space
     context: context//2d canvas context
   };
 
@@ -155,6 +155,10 @@ _namespace.main = function () {
   var _slist = new _namespace.slist(globs);
   globs.slist = _slist;
 
+  //composer is initialized after slist so composer can adjust its size based on the slist's size
+  var _composer = new _namespace.composer(globs);
+  globs.composer = _composer;
+
 
   var _grid = new _namespace.grid(globs);
   globs.grid = _grid;
@@ -175,6 +179,8 @@ _namespace.main = function () {
     );
     
     _grid.draw();
+
+    _composer.draw();
 
     _slist.draw();
     

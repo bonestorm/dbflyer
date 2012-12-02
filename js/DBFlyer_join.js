@@ -277,7 +277,6 @@ _namespace.join = function(globs,options){
           //completely new link
           OBJ.link = {linked: true,start:start_obj.db_id,end:end_obj.db_id};
       }
-      //OBJ.link.data holds information added after creating a link (primary and foreign keys)
 
     } else {
       if(OBJ.link.linked !== undefined && OBJ.link.linked){
@@ -799,16 +798,17 @@ _namespace.join = function(globs,options){
       x: OBJ.cx, y: OBJ.cy,
       leads: "[" + OBJ.leads.join(',') + "]",
       lead_start: "[" + OBJ.lead_start.join(',') + "]",
-      table_from_id: OBJ.table_from_id,
-      field_from_id: OBJ.field_from_id,
-      table_to_id: OBJ.table_to_id,
-      field_to_id: OBJ.field_to_id
+      table_from_id: OBJ.link.start,
+      field_from: OBJ.field_from_id,
+      table_to_id: OBJ.link.end,
+      field_to: OBJ.field_to
     };
+
     if(OBJ.link !== undefined){
       pass_vars.table_from_id = OBJ.link.start;
       pass_vars.table_to_id = OBJ.link.end;
-      if(OBJ.link.start_field !== undefined){pass_vars.field_from_id = OBJ.link.start_field;}
-      if(OBJ.link.end_field !== undefined){pass_vars.field_to_id = OBJ.link.end_field;}
+      if(OBJ.link.start_field !== undefined){pass_vars.field_from = OBJ.link.start_field;}
+      if(OBJ.link.end_field !== undefined){pass_vars.field_to = OBJ.link.end_field;}
     }
 
     if(OBJ.db_id !== undefined){

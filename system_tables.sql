@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS grid_object (
 CREATE TABLE IF NOT EXISTS grid_join (
   grid_object_id INT NOT NULL,
   leads TEXT,lead_start TEXT,
-  table_from_id INT,field_from INT,
-  table_to_id INT,field_to INT,
+  table_from_id INT,field_from TEXT,
+  table_to_id INT,field_to TEXT,
   FOREIGN KEY (grid_object_id) REFERENCES grid_object(id)
 ) ENGINE=InnoDB;
 

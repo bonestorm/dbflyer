@@ -1036,6 +1036,10 @@ _namespace.grid = function(globs) {
     if(_globs.slist.selected){
       _globs.slist.unfocus();//in case a dropdown is active or something
     }
+    if(_globs.composer.selected){
+      _globs.composer.unfocus();
+    }
+
 //    } else {
 
       send_notifications("mousedown",{});

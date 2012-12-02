@@ -145,9 +145,9 @@ _namespace.db_interface = function(globs) {
             leads: eval(obj.leads),
             lead_start: eval(obj.lead_start),
             table_from_id: obj.table_from_id,
-            field_from_id: obj.field_from_id,
+            field_from: obj.field_from,
             table_to_id: obj.table_to_id,
-            field_to_id: obj.field_to_id
+            field_to: obj.field_to
           });
         }
         if(obj.type == "COMMENT"){
