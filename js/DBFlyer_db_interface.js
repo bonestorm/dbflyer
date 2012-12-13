@@ -75,10 +75,11 @@ _namespace.db_interface = function(globs) {
         success: function(json) {
 
           var o = OBJ.objects[_globs.slist.picked_database];
-
-          if(OBJ.call_stack[0].mode == "save_object"){
-            if(OBJ.call_stack[0].name !== undefined){
-              o.table_ids[OBJ.call_stack[0].name] = json.id;
+		  var d = OBJ.call_stack[0].data;
+		  
+          if(d.mode == "save_object"){
+            if(d.name !== undefined){
+              o.table_ids[d.name] = json.id;
             }
             if(o.grid_info[json.id] === undefined){o.grid_info[json.id] = {};}
             for(var i in json){
@@ -89,13 +90,13 @@ _namespace.db_interface = function(globs) {
               }
             }
           }
-          if(OBJ.call_stack[0].mode == "delete_object"){
-            if(o.grid_info[OBJ.call_stack[0].id] !== undefined){
-              var gi = o.grid_info[OBJ.call_stack[0].id];
+          if(d.mode == "delete_object"){
+            if(o.grid_info[d.id] !== undefined){
+              var gi = o.grid_info[d.id];
               if(gi.type.match(/TABLE/i) && o.table_ids[gi.name] !== undefined){
                 o.table_ids[gi.name] = -1;
               }
-              delete o.grid_info[OBJ.call_stack[0].id];
+              delete o.grid_info[d.id];
             }
           }
 

@@ -161,6 +161,7 @@ _namespace.input_dropdown = function(globs,options){
     this.get_footprint();
 
     if(this.footprint !== undefined){
+    
       //sections could have a list of footprints that might be hit
       for(var j in this.footprint){
         var foot = this.footprint[j];
@@ -198,26 +199,27 @@ _namespace.input_dropdown = function(globs,options){
           }
         }
       }
-    }
 
-    if(event == "down" && this.scrollbar !== undefined){
-      var hit_scrollbar;
-      function clicked_on_arrow(obj,arrow,callback){
-        if(x < arrow.x+arrow.width && x >= arrow.x && y < arrow.y+arrow.height && y >= arrow.y){
-          hit_scrollbar = true;
-          callback(obj);
+      if(event == "down" && this.scrollbar !== undefined && this.dropped > 0){
+        var hit_scrollbar;
+        function clicked_on_arrow(obj,arrow,callback){
+          if(x < arrow.x+arrow.width && x >= arrow.x && y < arrow.y+arrow.height && y >= arrow.y){
+            hit_scrollbar = true;
+            callback(obj);
+          }
         }
+        clicked_on_arrow(this,this.scrollbar.up,function(obj){
+          obj.advance_page(-1);
+        });
+        clicked_on_arrow(this,this.scrollbar.down,function(obj){
+          obj.advance_page(1);
+        });
+        clicked_on_arrow(this,this.scrollbar.inner,function(obj){
+          alert("INNER!");
+        });
+        return hit_scrollbar;
       }
-      clicked_on_arrow(this,this.scrollbar.up,function(obj){
-        obj.advance_page(-1);
-      });
-      clicked_on_arrow(this,this.scrollbar.down,function(obj){
-        obj.advance_page(1);
-      });
-      clicked_on_arrow(this,this.scrollbar.inner,function(obj){
-        alert("INNER!");
-      });
-      return hit_scrollbar;
+      
     }
 
     return false;

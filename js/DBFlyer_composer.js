@@ -26,7 +26,7 @@ _namespace.composer = function(globs) {
     OBJ.width = _globs.cell_size*(_globs.win_quads_wide*4);
     OBJ.height = _globs.margin.y;
 
-    OBJ.height -= -(slist_box.y+_globs.border);//make room for the slist
+    OBJ.height -= 10-(slist_box.y+_globs.border);//make room for the slist
 
     //adjust because 0,0 is actually the top left of the grid and not top left of the canvas
     OBJ.y -= _globs.border+_globs.margin.y;
@@ -62,8 +62,8 @@ _namespace.composer = function(globs) {
     var ctx = _globs.context;
 
     //border
-    ctx.strokeStyle = "#ffffff";
-    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#e0e0ff";
+    ctx.fillStyle = "#f0f0f5";
     ctx.lineWidth = 1;
     roundRect(ctx, OBJ.x+0.5,OBJ.y+0.5, OBJ.width, OBJ.height, 10);
     ctx.stroke();
@@ -112,7 +112,7 @@ _namespace.composer = function(globs) {
       return true;//input consumed
 
     }
-    return false;//return to to signal that it has consummed the input and it shouldn't be propegated
+    return false;//return to to signal that it has consummed the input and it shouldn't be propagated
 
     
   }

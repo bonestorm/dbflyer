@@ -170,17 +170,18 @@ _namespace.table = function(globs,options){
   //required for all grid objects
   OBJ.save_to_db = function(callback){
 
+    var o = _globs.db_interface.objects[_globs.slist.picked_database];
+
     var table_callback = function(json){
 
       //table is full fledged now
       OBJ.db_id = json.id;
-
+	  
       if(callback !== undefined){callback(json);}
     }
 
     var pass_vars = {mode: "save_object", database: _globs.slist.picked_database, type: "TABLE", name: OBJ.name, x: OBJ.cx, y: OBJ.cy, width: _cells_wide};
 
-    var o = _globs.db_interface.objects[_globs.slist.picked_database];
     if(o.table_ids[OBJ.name] !== undefined && o.table_ids[OBJ.name] != -1){
       pass_vars.id = o.table_ids[OBJ.name];
     }

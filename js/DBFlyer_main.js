@@ -86,6 +86,7 @@ _namespace.main = function () {
     if(globs.grid !== undefined){globs.grid.resize(qwidth,qheight);}
     if(globs.slist !== undefined){globs.slist.resize(new_dims.width);}
     if(globs.help !== undefined){globs.help.resize(new_dims.width);}
+    if(globs.composer !== undefined){globs.composer.resize(new_dims.width);}
 
     return new_dims;
 
