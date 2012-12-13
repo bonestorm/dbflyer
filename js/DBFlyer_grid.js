@@ -127,6 +127,14 @@ _namespace.grid = function(globs) {
     _objs = [];
   }
 
+  OBJ.cell_in_bounds = function(cx,cy){
+    if(cx >= 0 && cy >= 0 && cx < _globs.quads_wide*4 && cy < _globs.quads_high*4){
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
   //gets all the objects that are hooked to cell cx,cy and have type type (type undefined will get all types)
   OBJ.get_objects = function(cx,cy,type){
 
@@ -234,8 +242,59 @@ _namespace.grid = function(globs) {
     return true;
 
   }
+
+  //sends notifictions to any object hooked into a cell next to any of the hooks passed in
+  OBJ.notify_neighbors = function(hooks){
   
-  OBJ.add_obj = function(obj){//adds the object to the grid if it isn't already and hooks it in
+    
+    //keep track of cells next to the hook cell so we can notify neighbors of this added object
+    var cells_next = {};
+    //mark all hook cells first so we don't consider them neightbor cells
+    for(var hook_ind in hooks){
+      var hook = hooks[hook_ind];
+      var m = "n"+hook.cx+":"+hook.cy;
+      cells_next[m] = 1;
+    }
+
+    //keep track of objects that have been notified so we don't notify twice
+    var to_notify = {};
+
+    for(var hook_ind in hooks){    
+      var hook = hooks[hook_ind];
+      
+      //check neighbors
+      for(var nx=hook.cx-1;nx<=hook.cx+1;nx++){
+        for(var ny=hook.cy-1;ny<=hook.cy+1;ny++){
+          if(nx == hook.cx && ny == hook.cy){continue;}
+          if(!OBJ.cell_in_bounds(hook.cx,hook.cy)){continue;}
+          var nqx = Math.floor(nx/4);
+          var nqy = Math.floor(ny/4);
+          var m = "n"+nx+":"+ny;
+          if(cells_next[m] === undefined){
+            cells_next[m] = 1;
+            for(var i=_hooks[nqx][nqy].length-1; i >= 0; i--){
+              var nobj = _hooks[nqx][nqy][i];
+              if(nobj.cx == nx && nobj.cy == ny){
+                to_notify[nobj.obj.id] = nobj.obj;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    //actually notify the collected objects
+    for(var id in to_notify){
+      var nobj = to_notify[id];
+      if(nobj.neighbor_notify !== undefined){
+        nobj.neighbor_notify();
+      }
+      //alert("notified cell:"+nobj.cx+":"+nobj.cy);
+    }
+
+  }
+  
+  OBJ.add_obj = function(obj,do_neighbor){//adds the object to the grid if it isn't already and hooks it in
     //obj should have an id inside and also
     //hooks, an array of cell positions that the object should be attached to
     
@@ -243,18 +302,27 @@ _namespace.grid = function(globs) {
       obj.id = ++_last_id;
       _objs[obj.id] = obj;
     }
-    
+
+    //add to grid hooks
     for(var hook_ind in obj.hooks){
+    
       var hook = obj.hooks[hook_ind];
+      
       var qx = Math.floor(hook.cx/4);
       var qy = Math.floor(hook.cy/4);
+      
       var new_hook = {obj: obj,cx: hook.cx,cy: hook.cy};
       if(hook.active !== undefined){new_hook.active = hook.active;}
       _hooks[qx][qy].push(new_hook);
       //if(_debug) log("pushed "+obj.id+" at "+hook.cx+":"+hook.cy);
     }
     
+    if(do_neighbor === undefined || do_neighbor){
+      OBJ.notify_neighbors(obj.hooks);
+    }
+    
   }
+  
   OBJ.remove_obj = function(obj){//removes the object's hooks into the grid but doesn't delete the object
     for(var hook_ind in obj.hooks){
       var hook = obj.hooks[hook_ind];
@@ -270,9 +338,9 @@ _namespace.grid = function(globs) {
           _hooks[qx][qy].splice(i,1);
         }
       }
-    }
-    
+    }  
   }
+  
   OBJ.delete_obj = function(obj){//removes from the grid completely, including from the hooks
     OBJ.remove_obj(obj);
     if(obj.hooks !== undefined){obj.hooks = [];}

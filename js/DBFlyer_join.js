@@ -198,6 +198,36 @@ _namespace.join = function(globs,options){
     return 1-OBJ.leads.length%2;
   }
 
+  
+  function find_link(){
+    //find if the leads should be interconnecting tables
+    //if a connection already exists then see if it needs to be severed
+    var start_t = [OBJ.start_target[0],OBJ.start_target[1]];
+    var start_ret = _globs.grid.get_objects(start_t[0],start_t[1],"table");
+    var end_t = [OBJ.end_target[0],OBJ.end_target[1]];
+    var end_ret = _globs.grid.get_objects(end_t[0],end_t[1],"table");
+    if(start_ret.length == 1 && end_ret.length == 1){
+      var start_obj = start_ret[0].obj;
+      var end_obj = end_ret[0].obj;
+      //if there's no link or the link is different than the last link
+      if(
+        OBJ.link === undefined || OBJ.link.linked === undefined || !OBJ.link.linked ||
+        OBJ.link.start != start_obj.db_id || OBJ.link.end != end_obj.db_id
+      ){
+          //completely new link
+          OBJ.link = {linked: true,start:start_obj.db_id,end:end_obj.db_id};
+          return true;
+      }
+
+    } else {
+      if(OBJ.link.linked !== undefined && OBJ.link.linked){
+        //to unlink you mark it as unlinked but keep the last link info around in case it's relinked
+        OBJ.link.linked = false;
+      }
+    }
+    return false;
+  }
+  
   function set_hooks(cx,cy,hooks){
 
     if(hooks === undefined){hooks = OBJ.hooks;}
@@ -260,30 +290,10 @@ _namespace.join = function(globs,options){
     //save the end point of the leads
     OBJ.lead_end = [(liter.pos.x-OBJ.cx),(liter.pos.y-OBJ.cy)];
 
-    //find if the leads should be interconnecting tables
-    //if a connection already exists then see if it needs to be severed
-    var start_t = [liter.start_target[0],liter.start_target[1]];
-    var start_ret = _globs.grid.get_objects(start_t[0],start_t[1],"table");
-    var end_t = [liter.end_target[0],liter.end_target[1]];
-    var end_ret = _globs.grid.get_objects(end_t[0],end_t[1],"table");
-    if(start_ret.length == 1 && end_ret.length == 1){
-      var start_obj = start_ret[0].obj;
-      var end_obj = end_ret[0].obj;
-      //if there's no link or the link is different than the last link
-      if(
-        OBJ.link === undefined || OBJ.link.linked === undefined || !OBJ.link.linked ||
-        OBJ.link.start != start_obj.db_id || OBJ.link.end != end_obj.db_id
-      ){
-          //completely new link
-          OBJ.link = {linked: true,start:start_obj.db_id,end:end_obj.db_id};
-      }
+    OBJ.start_target = liter.start_target;
+    OBJ.end_target = liter.end_target;
 
-    } else {
-      if(OBJ.link.linked !== undefined && OBJ.link.linked){
-        //to unlink you mark it as unlinked but keep the last link info around in case it's relinked
-        OBJ.link.linked = false;
-      }
-    }
+    find_link();
     
     return true;
   }
@@ -546,6 +556,16 @@ _namespace.join = function(globs,options){
     }
   }
 
+  //neighbor is moving in next to us, it could mean a link so find a link
+  OBJ.neighbor_notify = function(){
+    if(OBJ.link === undefined || OBJ.link.linked === undefined || !OBJ.link.linked){
+      set_hooks();//has side effect of finding starting and ending targets.  better way to do this?
+      if(find_link(OBJ.cx,OBJ.cy)){
+        OBJ.save_to_db();
+      }
+    }
+  }
+  
   OBJ.notify = function(event,vars){
 
 

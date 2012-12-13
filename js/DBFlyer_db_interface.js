@@ -75,7 +75,7 @@ _namespace.db_interface = function(globs) {
         success: function(json) {
 
           var o = OBJ.objects[_globs.slist.picked_database];
-		  var d = OBJ.call_stack[0].data;
+          var d = OBJ.call_stack[0].data;
 		  
           if(d.mode == "save_object"){
             if(d.name !== undefined){
@@ -156,7 +156,7 @@ _namespace.db_interface = function(globs) {
         if(new_obj.error != undefined && new_obj.error){
           alert("Error creating a new object in the grid:" + new_obj.error);
         } else {
-          _globs.grid.add_obj(new_obj);
+          _globs.grid.add_obj(new_obj,false);//send it false to tell it to not bother with neighbor notification
           obj_added = true;
         }
       }
