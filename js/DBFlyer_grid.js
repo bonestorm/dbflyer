@@ -230,12 +230,18 @@ _namespace.grid = function(globs) {
       if(obj.focus_notify !== undefined){obj.focus_notify(true);}
       obj.focus = true;
       _focused_obj = obj;
+      
+      //a single focused join or table is a starting point for a new query composer
+      if(obj.type() == "join" || obj.type() == "table"){
+        _globs.composer.set_starting_point(obj);
+      }
+      
     } else {
       if(_focused_obj !== undefined){
         if(_focused_obj.focus_notify !== undefined){_focused_obj.focus_notify(false);}
         _focused_obj.focus = false;
         _focused_obj = undefined;
-        
+        _globs.composer.clear_starting_point();        
       }
     }
 

@@ -68,7 +68,19 @@ _namespace.join = function(globs,options){
     OBJ.link.end_field = (options.field_to !== undefined) ? options.field_to : undefined;
   }
 
-
+  OBJ.is_linked = function(){
+    if(OBJ.link !== undefined && OBJ.link.linked !== undefined && OBJ.link.linked &&
+      OBJ.link.start !== undefined && OBJ.link.start.length > 0 &&
+      OBJ.link.end !== undefined && OBJ.link.end.length > 0 &&
+      OBJ.link.start_field !== undefined && OBJ.link.start_field.length > 0 &&
+      OBJ.link.end_field !== undefined && OBJ.link.end_field.length > 0
+    ){
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
   OBJ.type = function(){return "join";}
 
   //object for stepping down every cell in the given leads

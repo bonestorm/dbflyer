@@ -100,3 +100,23 @@ function openDot(ctx,x,y,dot_radius,connect_radius,quad){
   //ctx.closePath();
 
 }
+
+function cutDown(str,limit){
+  if(limit === undefined){limit = 100;}
+  if(str.length > limit){
+    str = substr(0,limit-3)+"...";
+  }
+  return str;
+}
+
+function clone(obj){
+    if(obj == null || typeof(obj) != 'object')
+        return obj;
+
+    var temp = new obj.constructor();
+    for(var key in obj)
+        temp[key] = clone(obj[key]);
+
+    return temp;
+}
+

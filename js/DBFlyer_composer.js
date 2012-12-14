@@ -14,7 +14,9 @@ _namespace.composer = function(globs) {
   var OBJ = {
     mouse_downed: false,//set to true after a section has a mousedown event right on it.  make false after the mouseup
     padding: 6,
-    selected: false
+    selected: false,
+    start: undefined,//start information to make a new query composition
+    links: undefined //linked tables
   };
 
   OBJ.resize = function(){
@@ -56,8 +58,29 @@ _namespace.composer = function(globs) {
     
   }
 
-
+  OBJ.set_starting_point = function(start_obj){
+    if(start_obj.type() == "join"){
+      if(start_obj.is_linked()){
+        OBJ.start = {type:"join",obj:start_obj,link:clone(start_obj.link)};
+      }
+    }
+    if(start_obj.type() == "table"){
+      OBJ.start = {type:"table",obj:start_obj};
+    }
+  }
+  OBJ.clear_starting_point = function(){
+    OBJ.start = undefined;
+  }
+  
+  
+  
   OBJ.draw = function(){
+
+    var max_table = 30;//maximum length of a table name before it is cut down to size
+    
+    //height of the start button font
+    var start_height = 24;
+    var start_padding = 10;//padding between text and button
 
     var ctx = _globs.context;
 
@@ -65,22 +88,52 @@ _namespace.composer = function(globs) {
     ctx.strokeStyle = "#e0e0ff";
     ctx.fillStyle = "#f0f0f5";
     ctx.lineWidth = 1;
-    roundRect(ctx, OBJ.x+0.5,OBJ.y+0.5, OBJ.width, OBJ.height, 10);
+    roundRect(ctx, OBJ.x+0.5,OBJ.y+0.5, OBJ.width, OBJ.height, 50);
     ctx.stroke();
     ctx.globalAlpha = 1.0;
     ctx.fill();
 
-/*
     //show where the click was
-    if(_hitx >= 0 && _hity >= 0){
-      //title
-      ctx.fillStyle = "#000000";
-      ctx.font = "12px Verdana";
+    if(OBJ.start !== undefined && OBJ.links === undefined){
+      var message = "Compose query from ";
+      if(OBJ.start.type == "table"){
+        message += "table "+cutDown(OBJ.start.obj.name,max_table);
+      }
+      if(OBJ.start.type == "join"){
+        var o = _globs.db_interface.objects[_globs.slist.picked_database];
+        var start_table = cutDown(o.grid_info[OBJ.start.obj.link.start].name,max_table);
+        var end_table = cutDown(o.grid_info[OBJ.start.obj.link.end].name,max_table);
+        message += "tables "+start_table+" and "+end_table;
+      }
+
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = "#000000";
+      ctx.font = start_height+"px Verdana";
       ctx.textAlign = "center"
       ctx.textBaseline = "middle";
-      ctx.fillText(_hitx+":"+_hity+" "+OBJ.frame,OBJ.x+Math.floor(OBJ.width/2)+0.5,OBJ.y+Math.floor(OBJ.height/2)+0.5);
+      
+      var tpos = [OBJ.x+Math.floor(OBJ.width/2)+0.5,OBJ.y+Math.floor(OBJ.height/2)+0.5];
+      var metrics = ctx.measureText(message);
+      var tdim = [metrics.width+start_padding*2,start_height+start_padding*2];
+      var bpos = [tpos[0]-Math.floor(tdim[0]/2),tpos[1]-Math.floor(tdim[1]/2)];//button position
+      
+      //button line
+      ctx.lineWidth = 3;
+      roundRect(ctx, bpos[0],bpos[1],tdim[0],tdim[1], 5);
+      ctx.stroke();
+      ctx.globalAlpha = 1.0;
+      ctx.fill();
+
+      //text
+      ctx.fillStyle = "#000000";
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.6;
+      ctx.fillText(message,tpos[0],tpos[1]);
+      ctx.globalAlpha = 0.4;
+      ctx.strokeText(message,tpos[0],tpos[1]);
+      
     }
-*/
 
     OBJ.frame++;
     
